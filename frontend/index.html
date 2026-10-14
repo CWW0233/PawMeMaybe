@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PawMeMaybe 🐾 | Cloud-Native Pet Adoption</title>
+  <!-- External CSS -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <header>
+    <div class="nav-container">
+      <a href="#" class="brand">
+        <span>🐾 PawMeMaybe</span>
+      </a>
+      <nav class="nav-links">
+        <a href="#pets">Find a Pet</a>
+        <a href="#trackingSection">Application Tracking</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <h1>Find Your Forever Companion 🐕🐈</h1>
+    <p>A cloud-native microservice pet adoption platform connecting rescue animals with loving families across Australia.</p>
+  </section>
+
+  <!-- Main Content -->
+  <main class="container" id="pets">
+    
+    <!-- Filter Panel -->
+    <div class="filter-panel">
+      <div class="filter-group">
+        <label>Species</label>
+        <select id="speciesFilter">
+          <option value="all">All Species (Dogs & Cats)</option>
+          <option value="dog">Dogs Only 🐶</option>
+          <option value="cat">Cats Only 🐱</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Breed Search</label>
+        <input type="text" id="breedInput" placeholder="e.g. Golden, Corgi, Shiba...">
+      </div>
+
+      <div class="filter-group">
+        <label>Age Group</label>
+        <select id="ageFilter">
+          <option value="all">Any Age</option>
+          <option value="puppy">Puppy / Kitten (&lt; 1 yr)</option>
+          <option value="young">Young (1 - 3 yrs)</option>
+          <option value="adult">Adult (3+ yrs)</option>
+        </select>
+      </div>
+
+      <button class="filter-btn" onclick="applyFilter()">Search Pets</button>
+    </div>
+
+    <!-- Pet Grid -->
+    <div class="pet-grid" id="petGrid">
+      <!-- Pet Card 1: Shiba Inu -->
+      <div class="pet-card" data-species="dog" data-breed="shiba">
+        <div class="pet-img-wrap">
+          <img src="https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&w=600&q=80" alt="Mochi the Shiba Inu">
+          <span class="pet-tag">Available</span>
+        </div>
+        <div class="pet-info">
+          <h2 class="pet-name">Mochi</h2>
+          <div class="pet-meta">Shiba Inu • 2 Years Old • Male</div>
+          <p class="pet-desc">Friendly, highly energetic, and loves outdoor playtime. Fully vaccinated and microchipped.</p>
+          <div class="pet-badges">
+            <span class="badge">Vaccinated</span>
+            <span class="badge">Microchipped</span>
+            <span class="badge">Good with kids</span>
+          </div>
+          <button class="adopt-btn" onclick="openAdoptModal('Mochi (Shiba Inu)')">Apply to Adopt 💌</button>
+        </div>
+      </div>
+
+      <!-- Pet Card 2: Golden Retriever -->
+      <div class="pet-card" data-species="dog" data-breed="golden">
+        <div class="pet-img-wrap">
+          <img src="https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=600&q=80" alt="Bailey the Golden Retriever">
+          <span class="pet-tag">Available</span>
+        </div>
+        <div class="pet-info">
+          <h2 class="pet-name">Bailey</h2>
+          <div class="pet-meta">Golden Retriever • 3 Years Old • Female</div>
+          <p class="pet-desc">Gentle giant with a heart of gold. Loves swimming and cuddle sessions on lazy Sundays.</p>
+          <div class="pet-badges">
+            <span class="badge">House Trained</span>
+            <span class="badge">Health Checked</span>
+          </div>
+          <button class="adopt-btn" onclick="openAdoptModal('Bailey (Golden Retriever)')">Apply to Adopt 💌</button>
+        </div>
+      </div>
+
+      <!-- Pet Card 3: British Shorthair -->
+      <div class="pet-card" data-species="cat" data-breed="british">
+        <div class="pet-img-wrap">
+          <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=600&q=80" alt="Luna the British Shorthair">
+          <span class="pet-tag">Available</span>
+        </div>
+        <div class="pet-info">
+          <h2 class="pet-name">Luna</h2>
+          <div class="pet-meta">British Shorthair • 1 Year Old • Female</div>
+          <p class="pet-desc">Calm, curious, and adores purring by warm windows. Great companion for apartment living.</p>
+          <div class="pet-badges">
+            <span class="badge">Desexed</span>
+            <span class="badge">Indoor Only</span>
+          </div>
+          <button class="adopt-btn" onclick="openAdoptModal('Luna (British Shorthair)')">Apply to Adopt 💌</button>
+        </div>
+      </div>
+
+      <!-- Pet Card 4: Corgi -->
+      <div class="pet-card" data-species="dog" data-breed="corgi">
+        <div class="pet-img-wrap">
+          <img src="https://images.unsplash.com/photo-1612536057832-2ff7ead58194?auto=format&fit=crop&w=600&q=80" alt="Waffles the Corgi">
+          <span class="pet-tag">Available</span>
+        </div>
+        <div class="pet-info">
+          <h2 class="pet-name">Waffles</h2>
+          <div class="pet-meta">Pembroke Corgi • 8 Months • Male</div>
+          <p class="pet-desc">Small legs with immense charm! Loves squeaky toys, snacks, and making new dog friends.</p>
+          <div class="pet-badges">
+            <span class="badge">Puppy Class Grad</span>
+            <span class="badge">Microchipped</span>
+          </div>
+          <button class="adopt-btn" onclick="openAdoptModal('Waffles (Corgi)')">Apply to Adopt 💌</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Application Status Tracking Section (Feature 4) -->
+  <section class="container" id="trackingSection" style="margin-top: 3.5rem;">
+    <div class="tracking-panel">
+      <div class="tracking-header">
+        <h2>📋 Application Status Tracking</h2>
+        <p>Already applied? Enter your Application Reference Number or Email to check real-time progress.</p>
+      </div>
+
+      <div class="tracking-search-bar">
+        <input type="text" id="trackingInput" placeholder="Try sample: APP-2026-001 or john@example.com">
+        <button class="filter-btn" onclick="checkApplicationStatus()">Check Status</button>
+      </div>
+
+      <!-- Result Card (shown upon search) -->
+      <div id="statusResultCard" class="status-result-card">
+        <div class="status-card-header">
+          <div>
+            <h3 id="statusApplicantName">Applicant: John Citizen</h3>
+            <span class="status-subtext" id="statusPetApplied">Pet Applied: Mochi (Shiba Inu)</span>
+          </div>
+          <span class="badge status-pill" id="statusBadge">Under Review</span>
+        </div>
+
+        <!-- Progress Stepper -->
+        <div class="stepper-wrap">
+          <div class="step step-done" id="step1">
+            <div class="step-circle">✓</div>
+            <div class="step-title">Submitted</div>
+          </div>
+          <div class="step-line active" id="line1"></div>
+          <div class="step step-active" id="step2">
+            <div class="step-circle">2</div>
+            <div class="step-title">Under Review</div>
+          </div>
+          <div class="step-line" id="line2"></div>
+          <div class="step" id="step3">
+            <div class="step-circle">3</div>
+            <div class="step-title">Interview</div>
+          </div>
+          <div class="step-line" id="line3"></div>
+          <div class="step" id="step4">
+            <div class="step-circle">4</div>
+            <div class="step-title">Approved 🎉</div>
+          </div>
+        </div>
+
+        <p class="status-note" id="statusNote">💡 Your application has been received and is currently being assessed by our shelter staff.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Adoption Application Modal -->
+  <div class="modal" id="adoptModal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeAdoptModal()">&times;</button>
+      <h3 style="margin-bottom: 0.3rem;">Adoption Application 📝</h3>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.2rem;">Applying for: <strong id="modalPetName" style="color: var(--primary);">Pet</strong></p>
+
+      <form id="adoptForm" onsubmit="handleFormSubmit(event)">
+        <div class="form-group">
+          <label>Your Full Name *</label>
+          <input type="text" required placeholder="e.g. John Citizen">
+        </div>
+        <div class="form-group">
+          <label>Email Address *</label>
+          <input type="email" required placeholder="john@example.com">
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" placeholder="0400 000 000">
+        </div>
+        <div class="form-group">
+          <label>Tell us about your home & experience</label>
+          <textarea rows="3" placeholder="Fenced backyard, other pets, working from home..."></textarea>
+        </div>
+        <button type="submit" class="form-submit-btn">Submit Application</button>
+      </form>
+    </div>
+  </div>
+
+  <footer>
+    <p>PawMeMaybe © 2026 • INFS3208 Cloud Computing Individual Project • Google Kubernetes Engine (GKE)</p>
+  </footer>
+
+  <!-- External JS -->
+  <script src="js/app.js"></script>
+</body>
+</html>
