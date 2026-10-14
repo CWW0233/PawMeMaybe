@@ -1,7 +1,6 @@
 # PawMeMaybe 🐾
 ### Cloud-Native Pet Adoption Microservice Platform
 **Course**: INFS3208 Cloud Computing (University of Queensland)  
-**Author**: Weiwei Chen (49371718)
 
 ---
 
