@@ -610,6 +610,62 @@ header {
   cursor: not-allowed;
 }
 
+/* Auth / Login Button */
+.auth-btn {
+  padding: 0.45rem 1rem;
+  background: #edf2f7;
+  color: #2d3748;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.2s;
+}
+
+.auth-btn:hover {
+  background: #e2e8f0;
+  border-color: #cbd5e0;
+}
+
+.auth-btn.logged-in {
+  background: #ebf8ff;
+  color: var(--primary);
+  border-color: #bee3f8;
+}
+
+/* Role Quick Switcher in Modal */
+.role-quick-btn {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.2rem;
+  border-radius: 10px;
+  border: 2px solid var(--border);
+  background: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+}
+
+.role-quick-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.06);
+}
+
+.role-quick-btn.adopter-btn:hover {
+  border-color: var(--primary);
+  background: #f7fafc;
+}
+
+.role-quick-btn.staff-btn:hover {
+  border-color: #805ad5;
+  background: #faf5ff;
+}
+
 /* Hamburger Button (Default hidden on desktop) */
 .hamburger-btn {
   display: none;

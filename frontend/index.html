@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PawMeMaybe 🐾</title>
+  <!-- Paw Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐾</text></svg>">
   <!-- External CSS -->
   <link rel="stylesheet" href="css/style.css">
 </head>
@@ -26,7 +28,12 @@
       <nav class="nav-links" id="navLinks">
         <a href="javascript:void(0)" id="nav-pets" class="nav-item active" onclick="switchTab('pets')">Find a Pet</a>
         <a href="javascript:void(0)" id="nav-tracking" class="nav-item" onclick="switchTab('tracking')">Application Tracking</a>
-        <a href="javascript:void(0)" id="nav-staff" class="nav-item staff-pill" onclick="switchTab('staff')">Staff Portal 🔒</a>
+        <a href="javascript:void(0)" id="nav-staff" class="nav-item staff-pill" style="display: none;" onclick="switchTab('staff')">Staff Portal 🔒</a>
+        
+        <!-- Auth / Role Button -->
+        <button id="authBtn" class="auth-btn" onclick="openLoginModal()">
+          👤 Login
+        </button>
       </nav>
     </div>
   </header>
@@ -75,7 +82,7 @@
         <!-- Pet Card 1: Authentic Japanese Shiba Inu -->
         <div class="pet-card" data-species="dog" data-breed="shiba">
           <div class="pet-img-wrap">
-            <img src="https://www.sbiprism.co.jp/column/column_68.html" alt="Mochi the Japanese Shiba Inu">
+            <img src="images/shiba.jpg" alt="Mochi the Japanese Shiba Inu">
             <span class="pet-tag">Available</span>
           </div>
           <div class="pet-info">
@@ -231,9 +238,37 @@
           </div>
         </div>
 
-        <!-- Management Tables -->
+        <!-- Shelter Pet Inventory Management (CRUD: Read, Update, Delete) -->
         <div class="tracking-panel" style="margin-top: 1.5rem;">
-          <h2 style="font-size: 1.3rem; margin-bottom: 1rem;">Recent Adoption Inquiries (from MySQL via adoption-service)</h2>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; flex-wrap: wrap; gap: 0.8rem;">
+            <div>
+              <h2 style="font-size: 1.3rem;">Shelter Pet Inventory (via pet-service)</h2>
+              <p style="color: var(--text-muted); font-size: 0.85rem;">Manage, update profiles, and adjust adoption availability.</p>
+            </div>
+            <button class="filter-btn" style="background: #38a169;" onclick="openAddPetModal()">+ Add New Rescue Pet 🐾</button>
+          </div>
+          <div class="table-responsive">
+            <table class="staff-table">
+              <thead>
+                <tr>
+                  <th>Pet ID</th>
+                  <th>Name / Photo</th>
+                  <th>Species & Breed</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="staffPetsTableBody">
+                <!-- Dynamically populated from pets data -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Recent Adoption Inquiries Table -->
+        <div class="tracking-panel" style="margin-top: 1.5rem;">
+          <h2 style="font-size: 1.3rem; margin-bottom: 0.4rem;">Recent Adoption Applications (via adoption-service)</h2>
+          <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.2rem;">Review incoming applicant submissions from public adopters.</p>
           <div class="table-responsive">
             <table class="staff-table">
               <thead>
@@ -280,6 +315,146 @@
           <textarea id="applicantExperience" rows="3" placeholder="Fenced backyard, other pets, working from home..."></textarea>
         </div>
         <button type="submit" class="form-submit-btn">Submit Application</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Login / Role Switcher Modal -->
+  <div class="modal" id="loginModal">
+    <div class="modal-content" style="max-width: 440px;">
+      <button class="modal-close" onclick="closeLoginModal()">&times;</button>
+      <div style="text-align: center; margin-bottom: 1.5rem;">
+        <span style="font-size: 2.5rem;">🐾</span>
+        <h3 style="font-size: 1.4rem; font-weight: 800; color: #1a202c; margin-top: 0.3rem;">Welcome to PawMeMaybe</h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">Select your role for quick access or sign in</p>
+      </div>
+
+      <!-- Quick Demo Switcher Buttons -->
+      <div style="display: flex; flex-direction: column; gap: 0.8rem; margin-bottom: 1.5rem;">
+        <button class="role-quick-btn adopter-btn" onclick="loginAs('adopter')">
+          <span style="font-size: 1.3rem;">🐶</span>
+          <div style="text-align: left;">
+            <div style="font-weight: 700;">Continue as Adopter (Public User)</div>
+            <div style="font-size: 0.8rem; color: #718096;">Browse pets, submit forms, track adoptions</div>
+          </div>
+        </button>
+
+        <button class="role-quick-btn staff-btn" onclick="loginAs('staff')">
+          <span style="font-size: 1.3rem;">🛡️</span>
+          <div style="text-align: left;">
+            <div style="font-weight: 700;">Continue as Shelter Staff</div>
+            <div style="font-size: 0.8rem; color: #718096;">Manage intake, approve forms & add pets</div>
+          </div>
+        </button>
+      </div>
+
+      <div style="position: relative; text-align: center; margin: 1.2rem 0;">
+        <hr style="border: none; border-top: 1px solid var(--border);">
+        <span style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: white; padding: 0 10px; font-size: 0.8rem; color: var(--text-muted);">or password login</span>
+      </div>
+
+      <!-- Form for realistic look -->
+      <form onsubmit="handleManualLogin(event)">
+        <div class="form-group">
+          <label>Role / Email</label>
+          <input type="text" id="loginUser" placeholder="e.g. staff@pawmemaybe.org or adopter">
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="loginPass" placeholder="••••••••">
+        </div>
+        <button type="submit" class="form-submit-btn" style="background: var(--primary);">Sign In</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Add New Pet Modal (Staff Only) -->
+  <div class="modal" id="addPetModal">
+    <div class="modal-content" style="max-width: 500px;">
+      <button class="modal-close" onclick="closeAddPetModal()">&times;</button>
+      <h3 style="margin-bottom: 0.3rem;">Add New Rescue Pet 🐾</h3>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.2rem;">Post a new animal profile to MySQL via pet-service.</p>
+
+      <form id="addPetForm" onsubmit="handleAddPetSubmit(event)">
+        <div class="form-group">
+          <label>Pet Name *</label>
+          <input type="text" id="newPetName" required placeholder="e.g. Bella">
+        </div>
+        <div style="display: flex; gap: 0.8rem;">
+          <div class="form-group" style="flex: 1;">
+            <label>Species *</label>
+            <select id="newPetSpecies" style="width: 100%; padding: 0.65rem 0.8rem; border-radius: 8px; border: 1px solid var(--border);">
+              <option value="dog">Dog 🐶</option>
+              <option value="cat">Cat 🐱</option>
+            </select>
+          </div>
+          <div class="form-group" style="flex: 1;">
+            <label>Breed *</label>
+            <input type="text" id="newPetBreed" required placeholder="e.g. Border Collie">
+          </div>
+        </div>
+        <div style="display: flex; gap: 0.8rem;">
+          <div class="form-group" style="flex: 1;">
+            <label>Age *</label>
+            <input type="text" id="newPetAge" required placeholder="e.g. 1 Year Old">
+          </div>
+          <div class="form-group" style="flex: 1;">
+            <label>Gender *</label>
+            <select id="newPetGender" style="width: 100%; padding: 0.65rem 0.8rem; border-radius: 8px; border: 1px solid var(--border);">
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Short Description *</label>
+          <textarea id="newPetDesc" rows="2" required placeholder="Very playful, loves walks..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>Photo URL (Optional)</label>
+          <input type="url" id="newPetPhoto" placeholder="Leave empty for auto cute photo">
+        </div>
+        <button type="submit" class="form-submit-btn" style="background: #38a169;">Publish Animal Profile 🚀</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit Pet Modal (Staff Only - CRUD: Update) -->
+  <div class="modal" id="editPetModal">
+    <div class="modal-content" style="max-width: 500px;">
+      <button class="modal-close" onclick="closeEditPetModal()">&times;</button>
+      <h3 style="margin-bottom: 0.3rem;">Edit Pet Profile ✏️</h3>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.2rem;">Update animal details via pet-service (PUT /api/pets/{id}).</p>
+
+      <form id="editPetForm" onsubmit="handleEditPetSubmit(event)">
+        <input type="hidden" id="editPetId">
+        <div class="form-group">
+          <label>Pet Name *</label>
+          <input type="text" id="editPetName" required>
+        </div>
+        <div style="display: flex; gap: 0.8rem;">
+          <div class="form-group" style="flex: 1;">
+            <label>Breed *</label>
+            <input type="text" id="editPetBreed" required>
+          </div>
+          <div class="form-group" style="flex: 1;">
+            <label>Age *</label>
+            <input type="text" id="editPetAge" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Adoption Status *</label>
+          <select id="editPetStatus" style="width: 100%; padding: 0.65rem 0.8rem; border-radius: 8px; border: 1px solid var(--border);">
+            <option value="Available">Available 🟢</option>
+            <option value="Pending Adoption">Pending Adoption 🟡</option>
+            <option value="Adopted">Adopted 🎉</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Short Description *</label>
+          <textarea id="editPetDesc" rows="2" required></textarea>
+        </div>
+        <button type="submit" class="form-submit-btn" style="background: var(--primary);">Save Profile Updates 💾</button>
       </form>
     </div>
   </div>
