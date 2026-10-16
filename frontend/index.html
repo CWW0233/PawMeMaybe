@@ -79,78 +79,7 @@
 
       <!-- Pet Grid -->
       <div class="pet-grid" id="petGrid">
-        <!-- Pet Card 1: Authentic Japanese Shiba Inu -->
-        <div class="pet-card" data-species="dog" data-breed="shiba">
-          <div class="pet-img-wrap">
-            <img src="images/shiba.jpg" alt="Mochi the Japanese Shiba Inu">
-            <span class="pet-tag">Available</span>
-          </div>
-          <div class="pet-info">
-            <h2 class="pet-name">Mochi</h2>
-            <div class="pet-meta">Japanese Shiba Inu • 2 Years Old • Male</div>
-            <p class="pet-desc">Classic red sesame Shiba Inu! High spirit, loyal, and fully house-trained. Vaccinated and microchipped.</p>
-            <div class="pet-badges">
-              <span class="badge">Vaccinated</span>
-              <span class="badge">Microchipped</span>
-              <span class="badge">Good with kids</span>
-            </div>
-            <button class="adopt-btn" onclick="openAdoptModal('Mochi (Shiba Inu)')">Apply to Adopt 💌</button>
-          </div>
-        </div>
-
-        <!-- Pet Card 2: Golden Retriever -->
-        <div class="pet-card" data-species="dog" data-breed="golden">
-          <div class="pet-img-wrap">
-            <img src="https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=600&q=80" alt="Bailey the Golden Retriever">
-            <span class="pet-tag">Available</span>
-          </div>
-          <div class="pet-info">
-            <h2 class="pet-name">Bailey</h2>
-            <div class="pet-meta">Golden Retriever • 3 Years Old • Female</div>
-            <p class="pet-desc">Gentle giant with a heart of gold. Loves swimming and cuddle sessions on lazy Sundays.</p>
-            <div class="pet-badges">
-              <span class="badge">House Trained</span>
-              <span class="badge">Health Checked</span>
-            </div>
-            <button class="adopt-btn" onclick="openAdoptModal('Bailey (Golden Retriever)')">Apply to Adopt 💌</button>
-          </div>
-        </div>
-
-        <!-- Pet Card 3: British Shorthair -->
-        <div class="pet-card" data-species="cat" data-breed="british">
-          <div class="pet-img-wrap">
-            <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=600&q=80" alt="Luna the British Shorthair">
-            <span class="pet-tag">Available</span>
-          </div>
-          <div class="pet-info">
-            <h2 class="pet-name">Luna</h2>
-            <div class="pet-meta">British Shorthair • 1 Year Old • Female</div>
-            <p class="pet-desc">Calm, curious, and adores purring by warm windows. Great companion for apartment living.</p>
-            <div class="pet-badges">
-              <span class="badge">Desexed</span>
-              <span class="badge">Indoor Only</span>
-            </div>
-            <button class="adopt-btn" onclick="openAdoptModal('Luna (British Shorthair)')">Apply to Adopt 💌</button>
-          </div>
-        </div>
-
-        <!-- Pet Card 4: Corgi -->
-        <div class="pet-card" data-species="dog" data-breed="corgi">
-          <div class="pet-img-wrap">
-            <img src="https://images.unsplash.com/photo-1612536057832-2ff7ead58194?auto=format&fit=crop&w=600&q=80" alt="Waffles the Corgi">
-            <span class="pet-tag">Available</span>
-          </div>
-          <div class="pet-info">
-            <h2 class="pet-name">Waffles</h2>
-            <div class="pet-meta">Pembroke Corgi • 8 Months • Male</div>
-            <p class="pet-desc">Small legs with immense charm! Loves squeaky toys, snacks, and making new dog friends.</p>
-            <div class="pet-badges">
-              <span class="badge">Puppy Class Grad</span>
-              <span class="badge">Microchipped</span>
-            </div>
-            <button class="adopt-btn" onclick="openAdoptModal('Waffles (Corgi)')">Apply to Adopt 💌</button>
-          </div>
-        </div>
+        <p style="color: var(--text-muted);">Loading pets…</p>
       </div>
     </main>
   </div>
@@ -165,49 +94,19 @@
     <main class="container">
       <div class="tracking-panel">
         <div class="tracking-header">
-          <h2>Lookup Your Application</h2>
-          <p>Enter your Application Reference Number (e.g. <code>APP-2026-001</code>) or your registered Email Address.</p>
+          <h2 id="trackingTitle">Lookup Your Application</h2>
+          <p id="trackingHint">Enter your Application Reference Number (e.g. <code>APP-2026-001</code>) and the email address used on the application.</p>
         </div>
 
-        <div class="tracking-search-bar">
-          <input type="text" id="trackingInput" placeholder="Try: APP-2026-001 or approved">
-          <button class="filter-btn" onclick="checkApplicationStatus()">Check Status</button>
-        </div>
+        <form class="tracking-search-bar" id="trackingForm" onsubmit="checkApplicationStatus(event)" style="flex-wrap: wrap;">
+          <input type="text" id="trackingInput" placeholder="Reference e.g. APP-2026-001" maxlength="20" style="flex: 1; min-width: 180px;">
+          <input type="email" id="trackingEmail" placeholder="Email on the application" maxlength="120" style="flex: 1; min-width: 180px;">
+          <button class="filter-btn" type="submit">Check Status</button>
+        </form>
 
-        <!-- Result Card -->
-        <div id="statusResultCard" class="status-result-card" style="display: none;">
-          <div class="status-card-header">
-            <div>
-              <h3 id="statusApplicantName">Applicant: John Citizen</h3>
-              <span class="status-subtext" id="statusPetApplied">Pet Applied: Mochi (Japanese Shiba Inu)</span>
-            </div>
-            <span class="badge status-pill" id="statusBadge">Under Review</span>
-          </div>
-
-          <!-- Progress Stepper -->
-          <div class="stepper-wrap">
-            <div class="step step-done" id="step1">
-              <div class="step-circle">✓</div>
-              <div class="step-title">Submitted</div>
-            </div>
-            <div class="step-line active" id="line1"></div>
-            <div class="step step-active" id="step2">
-              <div class="step-circle">2</div>
-              <div class="step-title">Under Review</div>
-            </div>
-            <div class="step-line" id="line2"></div>
-            <div class="step" id="step3">
-              <div class="step-circle">3</div>
-              <div class="step-title">Interview</div>
-            </div>
-            <div class="step-line" id="line3"></div>
-            <div class="step" id="step4">
-              <div class="step-circle">4</div>
-              <div class="step-title">Approved 🎉</div>
-            </div>
-          </div>
-
-          <p class="status-note" id="statusNote">💡 Your application has been received and is currently being assessed by our shelter staff.</p>
+        <!-- Result Cards Container (Supports multiple applications per user) -->
+        <div id="statusResultsContainer" style="display: flex; flex-direction: column; gap: 1.5rem;">
+          <!-- Dynamically populated cards -->
         </div>
       </div>
     </main>
@@ -225,15 +124,15 @@
         <!-- Quick Stats -->
         <div class="stats-row">
           <div class="stat-card">
-            <div class="stat-num">4</div>
+            <div class="stat-num" id="statActive">0</div>
             <div class="stat-label">Active Pets in Shelter</div>
           </div>
           <div class="stat-card">
-            <div class="stat-num" style="color: #dd6b20;">2</div>
+            <div class="stat-num" id="statPending" style="color: #dd6b20;">0</div>
             <div class="stat-label">Pending Applications</div>
           </div>
           <div class="stat-card">
-            <div class="stat-num" style="color: #38a169;">12</div>
+            <div class="stat-num" id="statAdopted" style="color: #38a169;">0</div>
             <div class="stat-label">Adoptions Finalized</div>
           </div>
         </div>
@@ -300,7 +199,7 @@
       <form id="adoptForm" onsubmit="handleFormSubmit(event)">
         <div class="form-group">
           <label>Your Full Name *</label>
-          <input type="text" id="applicantName" required placeholder="e.g. John Citizen">
+          <input type="text" id="applicantName" required maxlength="60" placeholder="e.g. John Citizen">
         </div>
         <div class="form-group">
           <label>Email Address *</label>
@@ -308,11 +207,11 @@
         </div>
         <div class="form-group">
           <label>Phone Number</label>
-          <input type="tel" id="applicantPhone" placeholder="0400 000 000">
+          <input type="tel" id="applicantPhone" placeholder="0400 000 000" pattern="[0-9+ \(\)\-]{6,20}" maxlength="20">
         </div>
         <div class="form-group">
           <label>Tell us about your home & experience</label>
-          <textarea id="applicantExperience" rows="3" placeholder="Fenced backyard, other pets, working from home..."></textarea>
+          <textarea id="applicantExperience" rows="3" maxlength="1000" placeholder="Fenced backyard, other pets, working from home..."></textarea>
         </div>
         <button type="submit" class="form-submit-btn">Submit Application</button>
       </form>
@@ -326,44 +225,44 @@
       <div style="text-align: center; margin-bottom: 1.5rem;">
         <span style="font-size: 2.5rem;">🐾</span>
         <h3 style="font-size: 1.4rem; font-weight: 800; color: #1a202c; margin-top: 0.3rem;">Welcome to PawMeMaybe</h3>
-        <p style="color: var(--text-muted); font-size: 0.9rem;">Select your role for quick access or sign in</p>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">Sign in to apply for a pet or manage the shelter</p>
       </div>
 
-      <!-- Quick Demo Switcher Buttons -->
-      <div style="display: flex; flex-direction: column; gap: 0.8rem; margin-bottom: 1.5rem;">
-        <button class="role-quick-btn adopter-btn" onclick="loginAs('adopter')">
-          <span style="font-size: 1.3rem;">🐶</span>
-          <div style="text-align: left;">
-            <div style="font-weight: 700;">Continue as Adopter (Public User)</div>
-            <div style="font-size: 0.8rem; color: #718096;">Browse pets, submit forms, track adoptions</div>
-          </div>
-        </button>
-
-        <button class="role-quick-btn staff-btn" onclick="loginAs('staff')">
-          <span style="font-size: 1.3rem;">🛡️</span>
-          <div style="text-align: left;">
-            <div style="font-weight: 700;">Continue as Shelter Staff</div>
-            <div style="font-size: 0.8rem; color: #718096;">Manage intake, approve forms & add pets</div>
-          </div>
-        </button>
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 1.2rem;">
+        <button type="button" id="tabLogin" class="filter-btn" style="flex: 1;" onclick="showAuthTab('login')">Sign In</button>
+        <button type="button" id="tabRegister" class="filter-btn" style="flex: 1; background: #a0aec0;" onclick="showAuthTab('register')">Create Account</button>
       </div>
 
-      <div style="position: relative; text-align: center; margin: 1.2rem 0;">
-        <hr style="border: none; border-top: 1px solid var(--border);">
-        <span style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: white; padding: 0 10px; font-size: 0.8rem; color: var(--text-muted);">or password login</span>
-      </div>
-
-      <!-- Form for realistic look -->
-      <form onsubmit="handleManualLogin(event)">
+      <form id="loginForm" onsubmit="handleLogin(event)">
         <div class="form-group">
-          <label>Role / Email</label>
-          <input type="text" id="loginUser" placeholder="e.g. staff@pawmemaybe.org or adopter">
+          <label>Username</label>
+          <input type="text" id="loginUser" required maxlength="30" autocomplete="username">
         </div>
         <div class="form-group">
           <label>Password</label>
-          <input type="password" id="loginPass" placeholder="••••••••">
+          <input type="password" id="loginPass" required maxlength="100" autocomplete="current-password">
         </div>
         <button type="submit" class="form-submit-btn" style="background: var(--primary);">Sign In</button>
+      </form>
+
+      <form id="registerForm" onsubmit="handleRegister(event)" style="display: none;">
+        <div class="form-group">
+          <label>Full Name *</label>
+          <input type="text" id="regName" required maxlength="60">
+        </div>
+        <div class="form-group">
+          <label>Email *</label>
+          <input type="email" id="regEmail" required maxlength="120" autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label>Username * (3-30 letters, numbers, . _ -)</label>
+          <input type="text" id="regUser" required pattern="[A-Za-z0-9_.\-]{3,30}" maxlength="30" autocomplete="username">
+        </div>
+        <div class="form-group">
+          <label>Password * (min 8 characters)</label>
+          <input type="password" id="regPass" required minlength="8" maxlength="100" autocomplete="new-password">
+        </div>
+        <button type="submit" class="form-submit-btn" style="background: #38a169;">Create Adopter Account</button>
       </form>
     </div>
   </div>
@@ -383,20 +282,28 @@
         <div style="display: flex; gap: 0.8rem;">
           <div class="form-group" style="flex: 1;">
             <label>Species *</label>
-            <select id="newPetSpecies" style="width: 100%; padding: 0.65rem 0.8rem; border-radius: 8px; border: 1px solid var(--border);">
+            <select id="newPetSpecies" onchange="populateBreedSelect('newPetBreed', 'newPetBreedOther', this.value)" style="width: 100%; padding: 0.65rem 0.8rem; border-radius: 8px; border: 1px solid var(--border);">
               <option value="dog">Dog 🐶</option>
               <option value="cat">Cat 🐱</option>
             </select>
           </div>
           <div class="form-group" style="flex: 1;">
             <label>Breed *</label>
-            <input type="text" id="newPetBreed" required placeholder="e.g. Border Collie">
+            <select id="newPetBreed" required onchange="toggleBreedOther('newPetBreed', 'newPetBreedOther')" style="width: 100%; padding: 0.65rem 0.8rem; border-radius: 8px; border: 1px solid var(--border);"></select>
+            <input type="text" id="newPetBreedOther" placeholder="Type the breed" style="display: none; margin-top: 0.4rem;">
           </div>
         </div>
         <div style="display: flex; gap: 0.8rem;">
           <div class="form-group" style="flex: 1;">
-            <label>Age *</label>
-            <input type="text" id="newPetAge" required placeholder="e.g. 1 Year Old">
+            <label>Age (Number) *</label>
+            <input type="number" id="newPetAgeNum" required min="1" max="30" value="2" placeholder="e.g. 2">
+          </div>
+          <div class="form-group" style="flex: 1;">
+            <label>Age Unit *</label>
+            <select id="newPetAgeUnit" style="width: 100%; padding: 0.65rem 0.8rem; border-radius: 8px; border: 1px solid var(--border);">
+              <option value="Years">Years Old</option>
+              <option value="Months">Months Old</option>
+            </select>
           </div>
           <div class="form-group" style="flex: 1;">
             <label>Gender *</label>
@@ -433,13 +340,21 @@
           <input type="text" id="editPetName" required>
         </div>
         <div style="display: flex; gap: 0.8rem;">
-          <div class="form-group" style="flex: 1;">
+          <div class="form-group" style="flex: 1.5;">
             <label>Breed *</label>
-            <input type="text" id="editPetBreed" required>
+            <select id="editPetBreed" required onchange="toggleBreedOther('editPetBreed', 'editPetBreedOther')" style="width: 100%; padding: 0.65rem 0.8rem; border-radius: 8px; border: 1px solid var(--border);"></select>
+            <input type="text" id="editPetBreedOther" placeholder="Type the breed" style="display: none; margin-top: 0.4rem;">
           </div>
           <div class="form-group" style="flex: 1;">
-            <label>Age *</label>
-            <input type="text" id="editPetAge" required>
+            <label>Age (Number) *</label>
+            <input type="number" id="editPetAgeNum" required min="1" max="30">
+          </div>
+          <div class="form-group" style="flex: 1;">
+            <label>Age Unit *</label>
+            <select id="editPetAgeUnit" style="width: 100%; padding: 0.65rem 0.8rem; border-radius: 8px; border: 1px solid var(--border);">
+              <option value="Years">Years Old</option>
+              <option value="Months">Months Old</option>
+            </select>
           </div>
         </div>
         <div class="form-group">
@@ -464,6 +379,7 @@
   </footer>
 
   <!-- External JS -->
+  <script src="js/config.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
