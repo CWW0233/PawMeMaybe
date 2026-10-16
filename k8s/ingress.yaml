@@ -1,26 +1,13 @@
-# HTTPS via a Google-managed certificate. Reserve a global static IP named pawme-ip and point your DNS at it.
-apiVersion: networking.gke.io/v1
-kind: ManagedCertificate
-metadata:
-  name: pawme-cert
-  namespace: pawme
-spec:
-  domains:
-    - PUBLIC_HOST
----
+# External HTTP load balancer (GKE Ingress). No domain needed: it gets a public IP automatically.
+# The browser talks to one origin; paths decide which service answers.
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: pawme
   namespace: pawme
-  annotations:
-    kubernetes.io/ingress.global-static-ip-name: pawme-ip
-    networking.gke.io/managed-certificates: pawme-cert
-    kubernetes.io/ingress.allow-http: "false"
 spec:
   rules:
-    - host: PUBLIC_HOST
-      http:
+    - http:
         paths:
           - { path: /api/pets, pathType: Prefix, backend: { service: { name: pet-service, port: { number: 8001 } } } }
           - { path: /api/adoptions, pathType: Prefix, backend: { service: { name: adoption-service, port: { number: 8002 } } } }

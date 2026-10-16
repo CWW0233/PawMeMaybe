@@ -1,4 +1,6 @@
-# Replace REGISTRY/... with your Artifact Registry path and PUBLIC_HOST with your domain.
+# Replace REGISTRY with your Artifact Registry path (see DEPLOY.md). Images are versioned (v1, v2)
+# so that rollout / rollback can be demonstrated. CORS is not needed in production because the
+# browser calls the same origin through the Ingress, so the allow-list is set to a dummy origin.
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -6,6 +8,12 @@ metadata:
   namespace: pawme
 spec:
   replicas: 2
+  revisionHistoryLimit: 5          # keep old ReplicaSets so "kubectl rollout undo" works
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0            # never take a pod down before its replacement is ready
+      maxSurge: 1
   selector:
     matchLabels: { app: pet-service }
   template:
@@ -14,11 +22,11 @@ spec:
     spec:
       containers:
         - name: pet-service
-          image: REGISTRY/pet-service:latest
+          image: REGISTRY/pet-service:v1
           ports:
             - containerPort: 8001
           env:
-            - { name: CORS_ORIGINS, value: "https://PUBLIC_HOST" }
+            - { name: CORS_ORIGINS, value: "http://same-origin.invalid" }
             - name: DATABASE_URL
               valueFrom: { secretKeyRef: { name: pawme-secrets, key: DATABASE_URL } }
             - name: JWT_SECRET
@@ -55,6 +63,12 @@ metadata:
   namespace: pawme
 spec:
   replicas: 2
+  revisionHistoryLimit: 5          # keep old ReplicaSets so "kubectl rollout undo" works
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0            # never take a pod down before its replacement is ready
+      maxSurge: 1
   selector:
     matchLabels: { app: adoption-service }
   template:
@@ -63,11 +77,11 @@ spec:
     spec:
       containers:
         - name: adoption-service
-          image: REGISTRY/adoption-service:latest
+          image: REGISTRY/adoption-service:v1
           ports:
             - containerPort: 8002
           env:
-            - { name: CORS_ORIGINS, value: "https://PUBLIC_HOST" }
+            - { name: CORS_ORIGINS, value: "http://same-origin.invalid" }
             - { name: PET_SERVICE_URL, value: "http://pet-service:8001" }
             - { name: STAFF_USERNAME, value: staff }
             - { name: SEED_DEMO_DATA, value: "0" }
@@ -109,6 +123,12 @@ metadata:
   namespace: pawme
 spec:
   replicas: 2
+  revisionHistoryLimit: 5          # keep old ReplicaSets so "kubectl rollout undo" works
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0            # never take a pod down before its replacement is ready
+      maxSurge: 1
   selector:
     matchLabels: { app: frontend }
   template:
@@ -117,7 +137,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: REGISTRY/frontend:latest
+          image: REGISTRY/frontend:v1
           ports:
             - containerPort: 80
           readinessProbe:

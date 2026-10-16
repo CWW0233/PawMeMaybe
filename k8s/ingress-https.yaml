@@ -1,0 +1,29 @@
+# OPTIONAL: HTTPS with a Google-managed certificate. Needs your own domain pointing at a reserved
+# global static IP named pawme-ip. Use this INSTEAD of ingress.yaml.
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: pawme-cert
+  namespace: pawme
+spec:
+  domains:
+    - PUBLIC_HOST
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: pawme
+  namespace: pawme
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: pawme-ip
+    networking.gke.io/managed-certificates: pawme-cert
+    kubernetes.io/ingress.allow-http: "false"
+spec:
+  rules:
+    - host: PUBLIC_HOST
+      http:
+        paths:
+          - { path: /api/pets, pathType: Prefix, backend: { service: { name: pet-service, port: { number: 8001 } } } }
+          - { path: /api/adoptions, pathType: Prefix, backend: { service: { name: adoption-service, port: { number: 8002 } } } }
+          - { path: /api/auth, pathType: Prefix, backend: { service: { name: adoption-service, port: { number: 8002 } } } }
+          - { path: /, pathType: Prefix, backend: { service: { name: frontend, port: { number: 80 } } } }
