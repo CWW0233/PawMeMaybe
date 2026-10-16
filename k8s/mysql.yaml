@@ -1,0 +1,79 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: pawme
+---
+# MySQL with a persistent disk (GKE provisions a Persistent Disk for the claim)
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+  namespace: pawme
+spec:
+  serviceName: mysql
+  replicas: 1
+  selector:
+    matchLabels: { app: mysql }
+  template:
+    metadata:
+      labels: { app: mysql }
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:8.0
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_DATABASE
+              value: pawme
+            - name: MYSQL_USER
+              value: pawme
+            - name: MYSQL_PASSWORD
+              valueFrom: { secretKeyRef: { name: pawme-secrets, key: MYSQL_PASSWORD } }
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom: { secretKeyRef: { name: pawme-secrets, key: MYSQL_ROOT_PASSWORD } }
+          readinessProbe:
+            exec: { command: ["sh", "-c", "mysqladmin ping -h 127.0.0.1 -uroot -p$MYSQL_ROOT_PASSWORD"] }
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          resources:
+            requests: { cpu: 250m, memory: 512Mi }
+            limits: { memory: 1Gi }
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/mysql
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests: { storage: 5Gi }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+  namespace: pawme
+spec:
+  clusterIP: None   # headless: only reachable inside the cluster
+  selector: { app: mysql }
+  ports:
+    - port: 3306
+---
+# Only the two backend services may talk to MySQL
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: mysql-allow-backends
+  namespace: pawme
+spec:
+  podSelector:
+    matchLabels: { app: mysql }
+  ingress:
+    - from:
+        - podSelector:
+            matchExpressions:
+              - { key: app, operator: In, values: [pet-service, adoption-service] }
+      ports:
+        - port: 3306

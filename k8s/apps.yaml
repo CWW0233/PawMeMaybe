@@ -1,0 +1,165 @@
+# Replace REGISTRY/... with your Artifact Registry path and PUBLIC_HOST with your domain.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pet-service
+  namespace: pawme
+spec:
+  replicas: 2
+  selector:
+    matchLabels: { app: pet-service }
+  template:
+    metadata:
+      labels: { app: pet-service }
+    spec:
+      containers:
+        - name: pet-service
+          image: REGISTRY/pet-service:latest
+          ports:
+            - containerPort: 8001
+          env:
+            - { name: CORS_ORIGINS, value: "https://PUBLIC_HOST" }
+            - name: DATABASE_URL
+              valueFrom: { secretKeyRef: { name: pawme-secrets, key: DATABASE_URL } }
+            - name: JWT_SECRET
+              valueFrom: { secretKeyRef: { name: pawme-secrets, key: JWT_SECRET } }
+            - name: INTERNAL_API_KEY
+              valueFrom: { secretKeyRef: { name: pawme-secrets, key: INTERNAL_API_KEY } }
+          readinessProbe:
+            httpGet: { path: /healthz, port: 8001 }
+            initialDelaySeconds: 5
+          livenessProbe:
+            httpGet: { path: /healthz, port: 8001 }
+            initialDelaySeconds: 15
+          resources:
+            requests: { cpu: 100m, memory: 128Mi }
+            limits: { cpu: 500m, memory: 256Mi }
+          securityContext:
+            allowPrivilegeEscalation: false
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pet-service
+  namespace: pawme
+spec:
+  selector: { app: pet-service }
+  ports:
+    - port: 8001
+      targetPort: 8001
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: adoption-service
+  namespace: pawme
+spec:
+  replicas: 2
+  selector:
+    matchLabels: { app: adoption-service }
+  template:
+    metadata:
+      labels: { app: adoption-service }
+    spec:
+      containers:
+        - name: adoption-service
+          image: REGISTRY/adoption-service:latest
+          ports:
+            - containerPort: 8002
+          env:
+            - { name: CORS_ORIGINS, value: "https://PUBLIC_HOST" }
+            - { name: PET_SERVICE_URL, value: "http://pet-service:8001" }
+            - { name: STAFF_USERNAME, value: staff }
+            - { name: SEED_DEMO_DATA, value: "0" }
+            - name: DATABASE_URL
+              valueFrom: { secretKeyRef: { name: pawme-secrets, key: DATABASE_URL } }
+            - name: JWT_SECRET
+              valueFrom: { secretKeyRef: { name: pawme-secrets, key: JWT_SECRET } }
+            - name: INTERNAL_API_KEY
+              valueFrom: { secretKeyRef: { name: pawme-secrets, key: INTERNAL_API_KEY } }
+            - name: STAFF_PASSWORD
+              valueFrom: { secretKeyRef: { name: pawme-secrets, key: STAFF_PASSWORD } }
+          readinessProbe:
+            httpGet: { path: /healthz, port: 8002 }
+            initialDelaySeconds: 5
+          livenessProbe:
+            httpGet: { path: /healthz, port: 8002 }
+            initialDelaySeconds: 15
+          resources:
+            requests: { cpu: 100m, memory: 128Mi }
+            limits: { cpu: 500m, memory: 256Mi }
+          securityContext:
+            allowPrivilegeEscalation: false
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: adoption-service
+  namespace: pawme
+spec:
+  selector: { app: adoption-service }
+  ports:
+    - port: 8002
+      targetPort: 8002
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: pawme
+spec:
+  replicas: 2
+  selector:
+    matchLabels: { app: frontend }
+  template:
+    metadata:
+      labels: { app: frontend }
+    spec:
+      containers:
+        - name: frontend
+          image: REGISTRY/frontend:latest
+          ports:
+            - containerPort: 80
+          readinessProbe:
+            httpGet: { path: /healthz, port: 80 }
+          resources:
+            requests: { cpu: 50m, memory: 32Mi }
+            limits: { cpu: 200m, memory: 64Mi }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  namespace: pawme
+spec:
+  selector: { app: frontend }
+  ports:
+    - port: 80
+      targetPort: 80
+---
+# Horizontal Pod Autoscaling (now safe: state lives in MySQL, not in pod memory)
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: pet-service
+  namespace: pawme
+spec:
+  scaleTargetRef: { apiVersion: apps/v1, kind: Deployment, name: pet-service }
+  minReplicas: 2
+  maxReplicas: 6
+  metrics:
+    - type: Resource
+      resource: { name: cpu, target: { type: Utilization, averageUtilization: 70 } }
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: adoption-service
+  namespace: pawme
+spec:
+  scaleTargetRef: { apiVersion: apps/v1, kind: Deployment, name: adoption-service }
+  minReplicas: 2
+  maxReplicas: 6
+  metrics:
+    - type: Resource
+      resource: { name: cpu, target: { type: Utilization, averageUtilization: 70 } }
