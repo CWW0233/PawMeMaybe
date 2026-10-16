@@ -22,3 +22,9 @@ data/mysql/
 Thumbs.db
 .vscode/
 .idea/
+
+# Runtime data and secrets
+backend/.env
+*.db
+backend/*/data/
+k8s/secrets.yaml
