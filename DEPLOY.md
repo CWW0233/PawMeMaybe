@@ -16,7 +16,11 @@ export REPO=$REGION-docker.pkg.dev/$PROJECT_ID/pawme
 
 ## 1. Get the code
 ```bash
+<<<<<<< HEAD
 # Download the project from GitHub (your repository)
+=======
+# Download the project from GitHub (replace with your repository URL)
+>>>>>>> fa21623dff311f21bdab79744746bb44d30a25bf
 git clone https://github.com/CWW0233/PawMeMaybe.git
 # Move into the project folder
 cd PawMeMaybe
