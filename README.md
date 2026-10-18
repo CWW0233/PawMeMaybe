@@ -12,7 +12,7 @@ PawMeMaybe decouples pet management and adoption handling into independent micro
 | `backend/pet-service` | FastAPI + SQLAlchemy | Pet catalogue (public read, staff write) |
 | `backend/adoption-service` | FastAPI + SQLAlchemy | Accounts/login (JWT), applications, approval workflow; calls pet-service to keep pet status in sync |
 | Database | **MySQL** on a Persistent Disk in GKE (`DATABASE_URL`), **SQLite** for local dev | Tables: `pets`, `users`, `applications` |
-| `k8s/` | Deployments, Services, HPA, Ingress (HTTPS), NetworkPolicy | State lives in the DB, so pods scale horizontally |
+| `k8s/` | Deployments (rolling update), Services, HPA, Ingress (HTTP load balancer), NetworkPolicy | State lives in the DB, so pods scale horizontally |
 
 ## Security model
 - Real accounts: PBKDF2-hashed passwords, HS256 JWT bearer tokens (8 h). Roles (`adopter`, `staff`) come from the server; registration can only create adopters.
@@ -34,15 +34,13 @@ The staff account is created on first start from `STAFF_USERNAME` / `STAFF_PASSW
 Tests: `python -m pytest backend/tests`
 
 ## Deploy to GKE
-```bash
-docker build -f backend/pet-service/Dockerfile -t REGISTRY/pet-service backend
-docker build -f backend/adoption-service/Dockerfile -t REGISTRY/adoption-service backend
-docker build -t REGISTRY/frontend frontend
-# push the images, edit REGISTRY / PUBLIC_HOST in k8s/*.yaml, then
-cp k8s/secrets.example.yaml k8s/secrets.yaml   # fill in real values; never commit it
-kubectl apply -f k8s/mysql.yaml && kubectl apply -f k8s/secrets.yaml
-kubectl apply -f k8s/apps.yaml -f k8s/ingress.yaml
-```
+Full step-by-step commands (every command has a comment) are in **[DEPLOY.md](DEPLOY.md)**. Summary:
+1. Build the three images (`pet-service`, `adoption-service`, `frontend`, tag `v1`) and push them to Artifact Registry.
+2. Create the GKE cluster (3 x e2-medium), then create the Kubernetes Secret with random passwords.
+3. `kubectl apply` the files in `k8s/` (`mysql.yaml`, `apps.yaml`, `ingress.yaml`). The Ingress prints a public IP; open `http://<IP>`.
+4. Demo commands for scaling, pod failure, and rollout / rollback (v1 to v2) are at the end of DEPLOY.md.
+
+**Staff login**: username `staff`. The password is generated randomly at deployment time (DEPLOY.md step 7 prints it), so it differs for every deployment. Adopters create their own account with "Create Account".
 
 ## Known limitations
 - Rate limiting is per pod (use Cloud Armor or a shared store for a global limit).
