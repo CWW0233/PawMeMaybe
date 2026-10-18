@@ -816,6 +816,25 @@ header {
   }
 }
 
+/* Phones: 4 equal-width steps so the labels cannot collide */
+@media (max-width: 480px) {
+  .stepper-wrap {
+    align-items: flex-start;
+  }
+  .step {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+  .step-line {
+    display: none;
+  }
+  .step-title {
+    font-size: 0.68rem;
+    line-height: 1.2;
+    text-align: center;
+  }
+}
+
 /* Footer */
 footer {
   text-align: center;
