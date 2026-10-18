@@ -150,8 +150,10 @@ def configure_app(app: FastAPI) -> None:
     configured = os.environ.get("CORS_ORIGINS", "").strip()
     if configured:  # production: exact origins only
         origins, origin_regex = [o.strip() for o in configured.split(",") if o.strip()], None
-    else:  # local development: any localhost port (Live Server, http.server, ...) and file:// pages
-        origins, origin_regex = ["null"], r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$"
+    else:  # local development: localhost / private-network (phone on the same Wi-Fi) on any port, and file:// pages
+        origins = ["null"]
+        origin_regex = (r"^https?://(localhost|127\.0\.0\.1|192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+"
+                        r"|172\.(1[6-9]|2\d|3[01])\.\d+\.\d+)(:\d+)?$")
     app.add_middleware(
         CORSMiddleware,
         allow_origins=origins,

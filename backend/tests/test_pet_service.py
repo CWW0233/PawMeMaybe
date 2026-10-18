@@ -44,3 +44,10 @@ def test_validation(pet_client):
 def test_cors_rejects_unknown_origin(pet_client):
     r = pet_client.get("/api/pets", headers={"Origin": "https://evil.example"})
     assert "access-control-allow-origin" not in r.headers
+
+
+def test_cors_allows_phone_on_lan_but_not_public_sites(pet_client):
+    lan = pet_client.get("/api/pets", headers={"Origin": "http://192.168.1.23:8080"})
+    assert lan.headers.get("access-control-allow-origin") == "http://192.168.1.23:8080"
+    public = pet_client.get("/api/pets", headers={"Origin": "http://8.8.8.8:8080"})
+    assert "access-control-allow-origin" not in public.headers
